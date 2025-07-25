@@ -3,6 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 const UserContext = createContext();
+const url = "http://localhost:5000";
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState([]);
@@ -12,7 +13,7 @@ export const UserProvider = ({ children }) => {
   async function registerUser(name, email, password, navigate, fetchPins) {
     setBtnLoading(true);
     try {
-      const { data } = await axios.post("/api/user/register", {
+      const {data}  = await axios.post(`${url}/api/user/register`, {
         name,
         email,
         password,
@@ -31,27 +32,33 @@ export const UserProvider = ({ children }) => {
   }
 
   async function loginUser(email, password, navigate, fetchPins) {
-    setBtnLoading(true);
-    try {
-      const { data } = await axios.post("/api/user/login", { email, password });
+  setBtnLoading(true);
 
-      toast.success(data.message);
-      setUser(data.user);
-      setIsAuth(true);
-      setBtnLoading(false);
-      navigate("/");
-      fetchPins();
-    } catch (error) {
-      toast.error(error.response.data.message);
-      setBtnLoading(false);
-    }
+  try {
+    const { data } = await axios.post(`${url}/api/user/login`, { email, password }, {
+      withCredentials: true 
+    });
+
+    toast.success(data.message);
+    setUser(data.user);
+    setIsAuth(true);
+    navigate("/");
+    fetchPins();
+  } catch (error) {
+    const errMsg =
+      error?.response?.data?.message || "Login failed. Please try again.";
+    toast.error(errMsg);
+  } finally {
+    setBtnLoading(false);
   }
+}
+
 
   const [loading, setLoading] = useState(true);
 
   async function fetchUser() {
     try {
-      const { data } = await axios.get("/api/user/me");
+      const { data } = await axios.get(`${url}/api/user/me`, { withCredentials: true });
 
       setUser(data);
       setIsAuth(true);
@@ -64,7 +71,7 @@ export const UserProvider = ({ children }) => {
 
   async function followUser(id, fetchUser) {
     try {
-      const { data } = await axios.post("/api/user/follow/" + id);
+      const { data } = await axios.post(`${url}/api/user/follow/` + id, { withCredentials: true });
 
       toast.success(data.message);
       fetchUser();

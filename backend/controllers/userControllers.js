@@ -45,7 +45,7 @@ export const loginUser = TryCatch(async (req, res) => {
     return res.status(400).json({
       message: "Wrong password",
     });
-
+  
   generateToken(user._id, res);
 
   res.json({

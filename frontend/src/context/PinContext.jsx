@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const PinContext = createContext();
+const url = "http://localhost:5000"
 
 export const PinProvider = ({ children }) => {
   const [pins, setPins] = useState([]);
@@ -10,7 +11,7 @@ export const PinProvider = ({ children }) => {
 
   async function fetchPins() {
     try {
-      const { data } = await axios.get("/api/pin/all");
+      const { data } = await axios.get(`${url}/api/pin/all`, { withCredentials: true });
 
       setPins(data);
       setLoading(false);
@@ -25,7 +26,7 @@ export const PinProvider = ({ children }) => {
   async function fetchPin(id) {
     setLoading(true);
     try {
-      const { data } = await axios.get("/api/pin/" + id);
+      const { data } = await axios.get(`${url}/api/pin/` + id, { withCredentials: true });
 
       setPin(data);
       setLoading(false);
@@ -37,7 +38,7 @@ export const PinProvider = ({ children }) => {
 
   async function updatePin(id, title, pin, setEdit) {
     try {
-      const { data } = await axios.put("/api/pin/" + id, { title, pin });
+      const { data } = await axios.put(`${url}/api/pin/` + id, { title, pin }, { withCredentials: true });
       toast.success(data.message);
       fetchPin(id);
       setEdit(false);
@@ -48,7 +49,7 @@ export const PinProvider = ({ children }) => {
 
   async function addComment(id, comment, setComment) {
     try {
-      const { data } = await axios.post("/api/pin/comment/" + id, { comment });
+      const { data } = await axios.post(`${url}/api/pin/comment/` + id, { comment }, { withCredentials: true });
       toast.success(data.message);
       fetchPin(id);
       setComment("");
@@ -60,7 +61,7 @@ export const PinProvider = ({ children }) => {
   async function deleteComment(id, commentId) {
     try {
       const { data } = await axios.delete(
-        `/api/pin/comment/${id}?commentId=${commentId}`
+        `/api/pin/comment/${id}?commentId=${commentId}`, { withCredentials: true }
       );
       toast.success(data.message);
       fetchPin(id);
@@ -72,7 +73,7 @@ export const PinProvider = ({ children }) => {
   async function deletePin(id, navigate) {
     setLoading(true);
     try {
-      const { data } = await axios.delete(`/api/pin/${id}`);
+      const { data } = await axios.delete(`${url}/api/pin/${id}`, { withCredentials: true });
       toast.success(data.message);
       navigate("/");
       setLoading(false);
@@ -92,7 +93,7 @@ export const PinProvider = ({ children }) => {
     navigate
   ) {
     try {
-      const { data } = await axios.post("/api/pin/new", formData);
+      const { data } = await axios.post(`${url}/api/pin/new`, formData, { withCredentials: true });
 
       toast.success(data.message);
       setFile([]);
@@ -102,6 +103,7 @@ export const PinProvider = ({ children }) => {
       fetchPins();
       navigate("/");
     } catch (error) {
+      console.log(error);
       toast.error(error.response.data.message);
     }
   }
