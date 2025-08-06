@@ -13,11 +13,12 @@ export const UserProvider = ({ children }) => {
   async function registerUser(name, email, password, navigate, fetchPins) {
     setBtnLoading(true);
     try {
-      const {data}  = await axios.post(`${url}/api/user/register`, {
-        name,
-        email,
-        password,
-      });
+      const { data } = await axios.post(
+        `${url}/api/user/register`,
+        { name, email, password },
+        { withCredentials: true } 
+      );
+
 
       toast.success(data.message);
       setUser(data.user);

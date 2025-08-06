@@ -5,14 +5,14 @@ export const isAuth = async (req, res, next) => {
   try {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
-    console.log("Token: ",token);
+    // console.log("Token: ",token);
     if (!token)
       return res.status(403).json({
         message: "Please Login",
       });
 
     const decodedData = jwt.verify(token, process.env.JWT_SEC);
-    console.log("Decoded: ", decodedData);
+    // console.log("Decoded: ", decodedData);
     if (!decodedData)
       return res.status(403).json({
         message: "token expired",

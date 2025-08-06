@@ -1,14 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PinData } from "../context/PinContext";
 import PinCard from "../components/PinCard";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../context/UserContext";
+import "./Home.css";
 
 const Account = ({ user }) => {
   const navigate = useNavigate();
   const { setIsAuth, setUser } = UserData();
+  const { pins } = PinData();
+
+  const [userPins, setUserPins] = useState([]);
+  const [reorderedPins, setReorderedPins] = useState([]);
+
+  useEffect(() => {
+    if (pins && user) {
+      const filtered = pins.filter((pin) => pin.owner === user._id);
+      setUserPins(filtered);
+    }
+  }, [pins, user]);
+
+  useEffect(() => {
+    if (userPins.length > 0) {
+      const columns = 3;
+      const rows = Math.ceil(userPins.length / columns);
+      const reordered = [];
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+          const index = c * rows + r;
+          if (userPins[index]) reordered.push(userPins[index]);
+        }
+      }
+
+      setReorderedPins(reordered);
+    }
+  }, [userPins]);
+
   const logoutHandler = async () => {
     try {
       const { data } = await axios.get("/api/user/logout");
@@ -17,19 +47,12 @@ const Account = ({ user }) => {
       setIsAuth(false);
       setUser([]);
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Logout failed.");
     }
   };
 
-  const { pins } = PinData();
-
-  let userPins;
-
-  if (pins) {
-    userPins = pins.filter((pin) => pin.owner === user._id);
-  }
   return (
-    <div>
+    <div className="page-wrapper">
       <div className="flex flex-col items-center justify-center">
         <div className="p-6 w-full">
           <div className="flex items-center justify-center">
@@ -51,11 +74,17 @@ const Account = ({ user }) => {
             </button>
           </div>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-4">
-            {userPins && userPins.length > 0 ? (
-              userPins.map((e) => <PinCard key={e._id} pin={e} />)
+          <div className="mt-6">
+            {reorderedPins.length > 0 ? (
+              <div className="container">
+                {reorderedPins.map((pin, i) => (
+                  <div className="box" key={i}>
+                    <PinCard pin={pin} />
+                  </div>
+                ))}
+              </div>
             ) : (
-              <p>No Pin Yet</p>
+              <p className="text-center mt-4">No Pins Yet</p>
             )}
           </div>
         </div>

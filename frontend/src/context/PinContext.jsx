@@ -90,7 +90,8 @@ export const PinProvider = ({ children }) => {
     setFile,
     setTitle,
     setPin,
-    navigate
+    navigate,
+    setLoading
   ) {
     try {
       const { data } = await axios.post(`${url}/api/pin/new`, formData, { withCredentials: true });
@@ -105,6 +106,7 @@ export const PinProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+      setLoading(false);
     }
   }
 

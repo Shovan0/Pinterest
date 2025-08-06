@@ -9,9 +9,11 @@ import PinPage from "./pages/PinPage";
 import Create from "./pages/Create";
 import Account from "./pages/Account";
 import UserProfile from "./pages/UserProfile";
+import Layout from "./components/Layout";
 
 const App = () => {
   const { loading, isAuth, user } = UserData();
+
   return (
     <>
       {loading ? (
@@ -20,25 +22,68 @@ const App = () => {
         <BrowserRouter>
           {isAuth && <Navbar user={user} />}
           <Routes>
-            <Route path="/" element={isAuth ? <Home /> : <Login />} />
+            <Route
+              path="/"
+              element={
+                isAuth ? (
+                  <Layout>
+                    <Home />
+                  </Layout>
+                ) : (
+                  <Login />
+                )
+              }
+            />
             <Route
               path="/account"
-              element={isAuth ? <Account user={user} /> : <Login />}
+              element={
+                isAuth ? (
+                  <Layout>
+                    <Account user={user} />
+                  </Layout>
+                ) : (
+                  <Login />
+                )
+              }
             />
             <Route
               path="/user/:id"
-              element={isAuth ? <UserProfile user={user} /> : <Login />}
+              element={
+                isAuth ? (
+                  <Layout>
+                    <UserProfile user={user} />
+                  </Layout>
+                ) : (
+                  <Login />
+                )
+              }
             />
-            <Route path="/create" element={isAuth ? <Create /> : <Login />} />
+            <Route
+              path="/create"
+              element={
+                isAuth ? (
+                  <Layout>
+                    <Create />
+                  </Layout>
+                ) : (
+                  <Login />
+                )
+              }
+            />
             <Route
               path="/pin/:id"
-              element={isAuth ? <PinPage user={user} /> : <Login />}
+              element={
+                isAuth ? (
+                  <Layout>
+                    <PinPage user={user} />
+                  </Layout>
+                ) : (
+                  <Login />
+                )
+              }
             />
             <Route path="/login" element={isAuth ? <Home /> : <Login />} />
-            <Route
-              path="/register"
-              element={isAuth ? <Home /> : <Register />}
-            />
+            <Route path="/register" element={isAuth ? <Home /> : <Register />} />
           </Routes>
         </BrowserRouter>
       )}

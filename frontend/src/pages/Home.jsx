@@ -1,26 +1,44 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { PinData } from "../context/PinContext";
 import { Loading } from "../components/Loading";
 import PinCard from "../components/PinCard";
+import "./Home.css";
 
 const Home = () => {
   const { pins, loading } = PinData();
+  const [reorderedPins, setReorderedPins] = useState([]);
+
+  useEffect(() => {
+    if (pins && pins.length > 0) {
+      const columns = 3; // JavaScript-wise layout logic
+      const rows = Math.ceil(pins.length / columns);
+      const reordered = [];
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+          const index = c * rows + r;
+          if (pins[index]) reordered.push(pins[index]);
+        }
+      }
+
+      setReorderedPins(reordered);
+    }
+  }, [pins]);
+
   return (
-    <div>
+    <div className="page-wrapper">
       {loading ? (
         <Loading />
-      ) : (
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="flex flex-wrap m-4">
-              {pins && pins.length > 0 ? (
-                pins.map((e, i) => <PinCard key={i} pin={e} />)
-              ) : (
-                <p>No Pins Yet</p>
-              )}
+      ) : reorderedPins.length > 0 ? (
+        <div className="container">
+          {reorderedPins.map((e, i) => (
+            <div className="box" key={i}>
+              <PinCard pin={e} />
             </div>
-          </div>
+          ))}
         </div>
+      ) : (
+        <p>No Pins Yet</p>
       )}
     </div>
   );

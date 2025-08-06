@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { PinData } from "../context/PinContext";
 import { useNavigate } from "react-router-dom";
+import {LoadingAnimation} from "../components/Loading";
 
 const Create = () => {
   const inputRef = useRef(null);
@@ -15,6 +16,7 @@ const Create = () => {
   const [title, setTitle] = useState("");
   const [pin, setPin] = useState("");
   const { addPin } = PinData();
+  const [loading, setLoading] = useState(false);
 
   const changeFileHandler = (e) => {
     const file = e.target.files[0];
@@ -31,6 +33,7 @@ const Create = () => {
   const navigate = useNavigate();
 
   const addPinHandler = (e) => {
+    setLoading(true);
     e.preventDefault();
 
     const formData = new FormData();
@@ -39,7 +42,7 @@ const Create = () => {
     formData.append("pin", pin);
     formData.append("file", file);
 
-    addPin(formData, setFilePrev, setFile, setTitle, setPin, navigate);
+    addPin(formData, setFilePrev, setFile, setTitle, setPin, navigate, setLoading);
   };
   return (
     <div>
@@ -107,7 +110,9 @@ const Create = () => {
                   required
                 />
               </div>
-              <button className="common-btn">Add+</button>
+              <button className="common-btn" disabled={loading}>
+                {loading ? <LoadingAnimation /> : "Add+"}
+              </button>
             </form>
           </div>
         </div>
