@@ -21,7 +21,7 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://your-frontend-domain.com'],
+  origin: ['http://localhost:5173', 'https://pinterest-frontend-sgyi.onrender.com'],
   credentials: true
 }));
 
