@@ -3,7 +3,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const PinContext = createContext();
-const url = "http://localhost:5000"
+// const url = "http://localhost:5000"
+const url = "https://pinterest-backend-q3yq.onrender.com"
 
 export const PinProvider = ({ children }) => {
   const [pins, setPins] = useState([]);
