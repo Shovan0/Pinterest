@@ -59,17 +59,26 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   async function fetchUser() {
-    try {
-      const { data } = await axios.get(`${url}/api/user/me`, { withCredentials: true });
+  try {
+    const { data } = await axios.get(`${url}/api/user/me`, {
+      withCredentials: true,
+    });
 
-      setUser(data);
-      setIsAuth(true);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
+    setUser(data);
+    setIsAuth(true);
+  } catch (error) {
+    console.error("Fetch user failed:", error);
+
+    if (error.response && error.response.status === 401 || error.response.status === 403) {
+      setIsAuth(false);
+      setUser(null);
     }
+
+  } finally {
+    setLoading(false);
   }
+}
+
 
   async function followUser(id, fetchUser) {
     try {
@@ -83,8 +92,13 @@ export const UserProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+  // const token = document.cookie.includes("token");
+  // if (!token) return; // No cookie, don't call API
+
+  fetchUser();
+}, []);
+
+
   return (
     <UserContext.Provider
       value={{

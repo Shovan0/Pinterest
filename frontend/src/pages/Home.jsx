@@ -10,7 +10,7 @@ const Home = () => {
 
   useEffect(() => {
     if (pins && pins.length > 0) {
-      const columns = 3; // JavaScript-wise layout logic
+      const columns = 3; 
       const rows = Math.ceil(pins.length / columns);
       const reordered = [];
 
