@@ -3,7 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 const UserContext = createContext();
-const url = "https://pinterest-backend-9ypb.onrender.com";
+const url = "http://localhost:5000";
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState([]);

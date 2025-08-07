@@ -21,9 +21,10 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://your-frontend-domain.com'],
   credentials: true
 }));
+
 
 import userRoutes from "./routes/userRoutes.js";
 import pinRoutes from "./routes/pinRoutes.js";
