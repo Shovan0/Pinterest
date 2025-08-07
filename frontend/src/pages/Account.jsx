@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { PinData } from "../context/PinContext";
 import PinCard from "../components/PinCard";
-import toast from "react-hot-toast";
-import axios from "axios";
+// import toast from "react-hot-toast";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../context/UserContext";
 import "./Home.css";
 
 const Account = ({ user }) => {
   const navigate = useNavigate();
-  const { setIsAuth, setUser } = UserData();
+  const { setIsAuth, setUser, logoutUser } = UserData();
   const { pins } = PinData();
 
   const [userPins, setUserPins] = useState([]);
@@ -40,15 +40,7 @@ const Account = ({ user }) => {
   }, [userPins]);
 
   const logoutHandler = async () => {
-    try {
-      const { data } = await axios.get("/api/user/logout");
-      toast.success(data.message);
-      navigate("/login");
-      setIsAuth(false);
-      setUser([]);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Logout failed.");
-    }
+    logoutUser(navigate)
   };
 
   return (

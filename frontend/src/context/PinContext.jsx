@@ -2,15 +2,13 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-// 👇 import isAuth from UserContext
-import { UserData } from "./UserContext"; // adjust path if needed
+import { UserData } from "./UserContext"; 
 
 const PinContext = createContext();
-// const url = "http://localhost:5000";
-const url = "https://pinterest-backend-q3yq.onrender.com";
+const url = "http://localhost:5000" || "https://pinterest-backend-q3yq.onrender.com";
 
 export const PinProvider = ({ children }) => {
-  const { isAuth } = UserData(); // 👈 use authentication status
+  const { isAuth } = UserData(); 
   const [pins, setPins] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -132,12 +130,11 @@ export const PinProvider = ({ children }) => {
     }
   }
 
-  // 👇 Only fetch pins if user is authenticated
   useEffect(() => {
     if (isAuth) {
       fetchPins();
     } else {
-      setPins([]); // clear pins if logged out
+      setPins([]); 
       setLoading(false);
     }
   }, [isAuth]);

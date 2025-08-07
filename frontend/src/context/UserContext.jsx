@@ -3,8 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 const UserContext = createContext();
-// const url = "http://localhost:5000";
-const url = "https://pinterest-backend-q3yq.onrender.com"
+const url = "http://localhost:5000" || "https://pinterest-backend-q3yq.onrender.com";
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState([]);
@@ -17,7 +16,7 @@ export const UserProvider = ({ children }) => {
       const { data } = await axios.post(
         `${url}/api/user/register`,
         { name, email, password },
-        { withCredentials: true } 
+        { withCredentials: true }
       );
 
 
@@ -34,50 +33,63 @@ export const UserProvider = ({ children }) => {
   }
 
   async function loginUser(email, password, navigate, fetchPins) {
-  setBtnLoading(true);
+    setBtnLoading(true);
 
-  try {
-    const { data } = await axios.post(`${url}/api/user/login`, { email, password }, {
-      withCredentials: true 
-    });
+    try {
+      const { data } = await axios.post(`${url}/api/user/login`, { email, password }, {
+        withCredentials: true
+      });
 
-    toast.success(data.message);
-    setUser(data.user);
-    setIsAuth(true);
-    navigate("/");
-    fetchPins();
-  } catch (error) {
-    const errMsg =
-      error?.response?.data?.message || "Login failed. Please try again.";
-    toast.error(errMsg);
-  } finally {
-    setBtnLoading(false);
+      toast.success(data.message);
+      setUser(data.user);
+      setIsAuth(true);
+      navigate("/");
+      fetchPins();
+    } catch (error) {
+      const errMsg =
+        error?.response?.data?.message || "Login failed. Please try again.";
+      toast.error(errMsg);
+    } finally {
+      setBtnLoading(false);
+    }
   }
-}
 
+  async function logoutUser(navigate) {
+    try {
+      const { data } = await axios.get(`${url}/api/user/logout`, {
+        withCredentials: true,
+      });
+      toast.success(data.message);
+      navigate("/login");
+      setIsAuth(false);
+      setUser([]);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Logout failed.");
+    }
+  };
 
   const [loading, setLoading] = useState(true);
 
   async function fetchUser() {
-  try {
-    const { data } = await axios.get(`${url}/api/user/me`, {
-      withCredentials: true,
-    });
+    try {
+      const { data } = await axios.get(`${url}/api/user/me`, {
+        withCredentials: true,
+      });
 
-    setUser(data);
-    setIsAuth(true);
-  } catch (error) {
-    console.error("Fetch user failed:", error);
+      setUser(data);
+      setIsAuth(true);
+    } catch (error) {
+      console.error("Fetch user failed:", error);
 
-    if (error.response && error.response.status === 401 || error.response.status === 403) {
-      setIsAuth(false);
-      setUser(null);
+      if (error.response && error.response.status === 401 || error.response.status === 403) {
+        setIsAuth(false);
+        setUser(null);
+      }
+
+    } finally {
+      setLoading(false);
     }
-
-  } finally {
-    setLoading(false);
   }
-}
 
 
   async function followUser(id, fetchUser) {
@@ -92,11 +104,8 @@ export const UserProvider = ({ children }) => {
   }
 
   useEffect(() => {
-  // const token = document.cookie.includes("token");
-  // if (!token) return; // No cookie, don't call API
-
-  fetchUser();
-}, []);
+    fetchUser();
+  }, []);
 
 
   return (
@@ -111,6 +120,7 @@ export const UserProvider = ({ children }) => {
         setIsAuth,
         setUser,
         followUser,
+        logoutUser
       }}
     >
       {children}
